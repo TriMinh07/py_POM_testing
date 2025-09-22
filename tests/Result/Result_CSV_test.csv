@@ -1,0 +1,8 @@
+a,b,operation,expected,Result,Actual
+1,7,+,8,PASS,8.0
+5,2,-,3,PASS,3.0
+66,0,/,ZeroDivisionError,PASS,ZeroDivisionError
+2,7,*,14,PASS,14.0
+-5,10,+,5,PASS,5.0
+35,7,/,5,PASS,5.0
+16,5,-,11,PASS,11.0

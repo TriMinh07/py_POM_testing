@@ -1,0 +1,8 @@
+a,b,operation,expected
+1,7,+,8
+5,2,-,3
+66,0,/,ZeroDivisionError
+2,7,*,14
+-5,10,+,5
+35,7,/,5
+16,5,-,11

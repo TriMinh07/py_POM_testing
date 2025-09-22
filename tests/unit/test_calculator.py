@@ -5,7 +5,7 @@ def test_add_basic():
     assert add(2, 3) == 5
 
 @pytest.mark.parametrize("a,b,expected", [(1,2,3), (-1,1,0), (2.5,0.5,3.0)])
-def test_add_param(a,b,expected):
+def test__add_param(a,b,expected):
     assert add(a, b) == expected
 
 def test_div_ok():
