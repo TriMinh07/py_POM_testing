@@ -1,40 +1,50 @@
-name: CI for Python Selenium Tests
+name: Python Selenium Tests   # Tên workflow (hiện trên GitHub Actions tab)
 
-on:
-  push:
+on:                          # Sự kiện kích hoạt
+  push:                      # Khi có code push lên
     branches: [ "main" ]
-  pull_request:
+  pull_request:              # Khi tạo pull request
     branches: [ "main" ]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # Chạy trên Ubuntu container
 
     steps:
-    # Bước 1: Checkout code
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      # 1. Checkout code từ repo về runner
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Bước 2: Cài đặt Python
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
+      # 2. Cài đặt Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-    # Bước 3: Cài đặt các thư viện từ requirements.txt
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      # 3. Cài dependencies từ requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    # Bước 4: Chạy test với pytest và sinh báo cáo HTML
-    - name: Run Pytest
-      run: |
-        pytest --maxfail=1 --disable-warnings -q --html=report.html --self-contained-html
+      # 4. Cài đặt Google Chrome
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
-    # Bước 5: Lưu file report làm artifact
-    - name: Upload test report
-      uses: actions/upload-artifact@v4
-      with:
-        name: pytest-report
-        path: report.html
+      # 5. Cài đặt ChromeDriver
+      - name: Install Chromedriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+' | head -1)
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+          wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+
+      # 6. Chạy test với pytest
+      - name: Run tests
+        run: |
+          pytest --maxfail=1 --disable-warnings -q
