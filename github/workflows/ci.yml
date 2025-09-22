@@ -1,17 +1,67 @@
-name: Python Selenium Tests   # Tên workflow (hiện trên GitHub Actions tab)
+#name: Python Selenium Tests   # Tên workflow (hiện trên GitHub Actions tab)
+#
+#on:                          # Sự kiện kích hoạt
+#  push:                      # Khi có code push lên
+#    branches: [ "main" ]
+#  pull_request:              # Khi tạo pull request
+#    branches: [ "main" ]
+#
+#jobs:
+#  test:
+#    runs-on: ubuntu-latest   # Chạy trên Ubuntu container
+#
+#    steps:
+#      # 1. Checkout code từ repo về runner
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      # 2. Cài đặt Python
+#      - name: Set up Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: "3.10"
+#
+#      # 3. Cài dependencies từ requirements.txt
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install -r requirements.txt
+#
+#      # 4. Cài đặt Google Chrome
+#      - name: Install Chrome
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4
+#          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+#
+#      # 5. Cài đặt ChromeDriver
+#      - name: Install Chromedriver
+#        run: |
+#          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+' | head -1)
+#          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+#          wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
+#          unzip chromedriver_linux64.zip
+#          sudo mv chromedriver /usr/local/bin/
+#
+#      # 6. Chạy test với pytest
+#      - name: Run tests
+#        run: |
+#          pytest --maxfail=1 --disable-warnings -q
+name: Python Unit Tests
 
-on:                          # Sự kiện kích hoạt
-  push:                      # Khi có code push lên
+on:
+  push:
     branches: [ "main" ]
-  pull_request:              # Khi tạo pull request
+  pull_request:
     branches: [ "main" ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest   # Chạy trên Ubuntu container
+  unit-tests:
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code từ repo về runner
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -21,30 +71,13 @@ jobs:
         with:
           python-version: "3.10"
 
-      # 3. Cài dependencies từ requirements.txt
+      # 3. Cài dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Cài đặt Google Chrome
-      - name: Install Chrome
+      # 4. Chạy pytest chỉ trong thư mục unit
+      - name: Run Unit Tests
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install -y ./google-chrome-stable_current_amd64.deb
-
-      # 5. Cài đặt ChromeDriver
-      - name: Install Chromedriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+' | head -1)
-          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-          wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-
-      # 6. Chạy test với pytest
-      - name: Run tests
-        run: |
-          pytest --maxfail=1 --disable-warnings -q
+          pytest tests/unit --maxfail=1 --disable-warnings -q
