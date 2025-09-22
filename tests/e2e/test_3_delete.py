@@ -24,7 +24,7 @@ test_data = list(df[["Name", "Link"]].itertuples(index=True, name=None))
 def test_deleteRepositori(driver, idx, Name, Link):
     repository_page = repository_pages(driver)
     name = Name
-    # đường dẫn tới trang settings
+    # đường dẫn tới trang settingss
     link = Link
     # mở rang settings
     repository_page.open(link)
